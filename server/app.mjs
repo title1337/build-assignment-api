@@ -20,7 +20,7 @@ app.post('/assignments', async (req, res) => {
   try {
     await connectionPool.query(
       `insert into assignments (user_id, title, content, category, length, created_at, updated_at, published_at, status)
-      values ($1, $2, $3, $4, $5, $6, $7, $8)`,
+      values ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
       [
         1,
         newAssignment.title,
@@ -33,7 +33,8 @@ app.post('/assignments', async (req, res) => {
         newAssignment.status,
       ],
     );
-  } catch {
+  } catch (error) {
+    console.log(error);
     return res.status(500).json({
       message: 'Server could not create assignment because database connection',
     });
