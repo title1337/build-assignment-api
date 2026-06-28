@@ -7,4 +7,4 @@ const connectionPool = new Pool({
     'postgresql://postgres:postgrespassword@localhost:5432/exam1',
 });
 
-export default connectionPool;
+export { connectionPool };
