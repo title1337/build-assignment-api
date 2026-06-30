@@ -44,18 +44,38 @@ app.post('/assignments', async (req, res) => {
 });
 
 app.get('/assignments', async (req, res) => {
+  let results;
   try {
-    const result = await connectionPool.query('select * from assignments');
-    return res.status(200).json({
-      message : "Get assignment sucessfully"
-      data: result.rows,
-    });
-  } catch (error) {
-    console.log(error);
+    results = await connectionPool.query('select * from assignments');
+  } catch {
     return res.status(500).json({
-      message: 'Server could not read assignments because database connection',
+      message: 'Server could not read assignment because database issue',
     });
   }
+
+  return res.status(200).json({
+    data: results.rows,
+  });
+});
+
+app.get('/assignments/:assignmentId', async (req, res) => {
+  const assignmentIdFromClient = req.params.assignmentId;
+  const results = await connectionPool.query(
+    `
+    select * from assignments where assignment_id = $1
+  `,
+    [assignmentIdFromClient],
+  );
+
+  if (!results.rows[0]) {
+    return res.status(404).json({
+      message: `Server could not find a requested assignment (assignment id: ${assignmentIdFromClient})`,
+    });
+  }
+
+  return res.status(200).json({
+    data: results.rows[0],
+  });
 });
 
 app.listen(port, () => {
