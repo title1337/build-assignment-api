@@ -42,6 +42,22 @@ app.post('/assignments', async (req, res) => {
 
   return res.status(201).json({ message: 'Created assignment sucessfully' });
 });
+
+app.get('/assignments', async (req, res) => {
+  try {
+    const result = await connectionPool.query('select * from assignments');
+    return res.status(200).json({
+      message : "Get assignment sucessfully"
+      data: result.rows,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      message: 'Server could not read assignments because database connection',
+    });
+  }
+});
+
 app.listen(port, () => {
   console.log(`Server is running at ${port}`);
 });
