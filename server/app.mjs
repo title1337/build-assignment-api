@@ -78,6 +78,63 @@ app.get('/assignments/:assignmentId', async (req, res) => {
   });
 });
 
+app.put('/assignments/:assignmentId', async (req, res) => {
+  const assignmentIdFromClient = req.params.assignmentId;
+  const updatedAssignment = { ...req.body, updated_at: new Date() };
+
+  await connectionPool.query(
+    `
+      update assignments
+      set title = $2,
+          content = $3,
+          category = $4,
+          length = $5,
+          status = $6,
+          updated_at = $7
+      where assignment_id = $1
+    `,
+    [
+      assignmentIdFromClient,
+      updatedAssignment.title,
+      updatedAssignment.content,
+      updatedAssignment.category,
+      updatedAssignment.length,
+      updatedAssignment.status,
+      updatedAssignment.updated_at,
+    ],
+  );
+
+  return res.status(200).json({
+    message: 'Updated assignment sucessfully',
+  });
+});
+
+// app.delete('/assignments/:assignmentId', async (req, res) => {
+//   const assignmentIdFromClient = req.params.assignmentId;
+
+//   await connectionPool.query(
+//     `delete from assignments
+// 	   where assignmentId = $1`,
+//     [assignmentIdFromClient],
+//   );
+
+//   return res.status(200).json({
+//     message: 'Delete assignment sucessfully',
+//   });
+// });
+app.delete('/assignments/:assignmentId', async (req, res) => {
+  const assignmentIdFromClient = req.params.assignmentId;
+
+  await connectionPool.query(
+    `delete from assignments
+	   where assignment_id = $1`,
+    [assignmentIdFromClient],
+  );
+
+  return res.status(200).json({
+    message: 'Delete assignment sucessfully',
+  });
+});
 app.listen(port, () => {
   console.log(`Server is running at ${port}`);
 });
