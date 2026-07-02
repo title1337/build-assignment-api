@@ -1,5 +1,6 @@
 import express from 'express';
 import { connectionPool } from './utils/db.mjs';
+import { validationAssignment } from './Middlewares/assignment.validate.mjs';
 
 const app = express();
 const port = 4001;
@@ -7,9 +8,9 @@ const port = 4001;
 app.use(express.json());
 
 app.get('/test', (req, res) => {
-  return res.json('Server API is working 🚀');
+  return res.json('Server API is working ');
 });
-app.post('/assignments', async (req, res) => {
+app.post('/assignments', [validationAssignment], async (req, res) => {
   const newAssignment = {
     ...req.body,
     created_at: new Date(),
@@ -109,19 +110,6 @@ app.put('/assignments/:assignmentId', async (req, res) => {
   });
 });
 
-// app.delete('/assignments/:assignmentId', async (req, res) => {
-//   const assignmentIdFromClient = req.params.assignmentId;
-
-//   await connectionPool.query(
-//     `delete from assignments
-// 	   where assignmentId = $1`,
-//     [assignmentIdFromClient],
-//   );
-
-//   return res.status(200).json({
-//     message: 'Delete assignment sucessfully',
-//   });
-// });
 app.delete('/assignments/:assignmentId', async (req, res) => {
   const assignmentIdFromClient = req.params.assignmentId;
 
